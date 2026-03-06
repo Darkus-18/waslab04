@@ -2,8 +2,8 @@
 
 Students:
 
-* Surname_1, First_name_1
+* Adell Caballero, Laura
 
-* Surname_2, First_name_2
+* Campderros Gallardo, Anna
 
 Your deployed webapp at Render|Heroku|... (task #6): <https://*********.***.***/>
