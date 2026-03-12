@@ -4,8 +4,10 @@
   <% content_for :title, "Waslab04" %>
 
   <div class=container>
-    <h1 class=wottitle>Wall of Tweets · RoR Edition</h1>
-    <div class=subtitle>A minimal wall for quick thoughts. Clean and focused.</div>
+    <header class="header-section">
+      <h1 class="wottitle">Wall of Tweets · RoR Edition</h1>
+      <p class="subtitle">A minimal wall for quick thoughts. Clean and focused.</p>
+    </header>
 
     <div class=walltweet>
       <form action="/tweets" accept-charset="UTF-8" method="post"><input type="hidden" name="authenticity_token" value=<%= form_authenticity_token %> autocomplete="off">
@@ -24,21 +26,40 @@
         </div>
       </form>
     </div>
-  </div>
 
-  <div id="tweets">
-    <% @tweets.each do |tweet| %>
-      <%= render tweet %>
-      <p>
-        <%= button_to 'Like this tweet', like_tweet_path(tweet), method: :put %>
-        <br>
-        <%= link_to "Show this tweet", tweet %>
-        <hr>
-      </p>
+<div id="tweets">
+  <% current_date = nil %>
+  <% @tweets.each do |tweet| %>
+    <% if tweet.created_at.to_date != current_date %>
+      <div class="date-separator">
+        <%= tweet.created_at.strftime("%A, %B %d, %Y").upcase %>
+      </div>
+      <% current_date = tweet.created_at.to_date %>
     <% end %>
-  </div>
 
-  <%= link_to "New tweet", new_tweet_path %>
+    <div class="tweet-card">
+      <div class="tweet-sidebar">
+        <div class="likes-container">
+          <span class="numlikes"><%= tweet.likes_count rescue 0 %></span>
+          <span class="smallfont">likes</span>
+          <div class="button_to">
+            <%= button_to 'like', like_tweet_path(tweet), method: :put %>
+          </div>
+        </div>
+      </div>
+
+        <div class="item">
+          <h4>
+            <em><%= tweet.author %></em> · <%= tweet.created_at.strftime("%H:%M") %>
+          </h4>
+          <p><%= tweet.content %></p>
+        </div>
+    </div>
+  <% end %>
+</div>
+
+
+
 </body>
 
 <style>
@@ -179,4 +200,109 @@
     border-color: var(--accent);
     box-shadow: 0 0 0 3px color-mix(in oklab, var(--accent) 20%, transparent);
   }
+
+
+  /*Tweets*/
+
+  .tweet-card {
+    display: grid;
+    grid-template-columns: 92px 1fr;
+    gap: 16px;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 16px;
+    box-shadow: var(--shadow);
+    margin: 12px 0;
+  }
+
+  .tweet-sidebar {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+  }
+
+  .likes-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 8px;
+    border: 1px dashed var(--line);
+    border-radius: 10px;
+  }
+
+  .numlikes {
+    font-size: 28px;
+    font-weight: 700;
+    line-height: 1;
+  }
+
+  .smallfont {
+    font-size: 12px;
+    color: var(--muted);;
+  }
+
+  .button_to, .button_to button {
+    margin: 0;
+  }
+
+  .button_to button {
+    appearance: none;
+    border: 1px solid var(--accent);
+    background: var(--accent);
+    color: var(--accent-ink);
+    font-weight: 600;
+    padding: 10px 14px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: transform .02s ease, filter .15s ease, background .15s ease, color .15s ease;
+    min-width: 90px;
+    text-align: center;
+  }
+
+
+  .tweet-body-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .item h4 {
+    margin: 0 0 6px;
+    font-size: 14px;
+    color: var(--muted);
+    font-weight: 600;
+  }
+
+  .item h4 em {
+    font-style: italic;
+  }
+
+  .item p {
+    margin: 0;
+    font-size: 16px;
+    line-height: 1.7;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+  }
+
+  .date-separator {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 24px 0 10px;
+    color: var(--muted);
+    font-weight: 600;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+  }
+
+  .date-separator::before, .date-separator::after {
+    content: "";
+    height: 1px;
+    flex: 1;
+    background: var(--line);
+}
 </style>
