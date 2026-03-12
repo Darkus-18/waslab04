@@ -58,10 +58,9 @@ class TweetsController < ApplicationController
   end
 
   def like
-      @tweet.likes += 1
-      @tweet.save
+      @tweet.increment!(:likes)
 
-      redirect_to root_path
+      redirect_to tweets_path
   end
 
   private

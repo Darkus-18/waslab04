@@ -49,10 +49,17 @@
     <div class="tweet-card">
       <div class="tweet-sidebar">
         <div class="likes-container">
-          <span class="numlikes"><%= tweet.likes_count rescue 0 %></span>
+          <span class="numlikes"><%= tweet.likes rescue 0 %></span>
           <span class="smallfont">likes</span>
           <div class="button_to">
-            <%= button_to 'like', like_tweet_path(tweet), method: :put %>
+            <% if session[:created_ids]&.include?(tweet.id) %>
+              <%= button_to 'destroy', tweet_path(tweet),
+                            method: :delete,
+                            form: { data: { turbo_confirm: "Are you sure?" } },
+                            class: "btn-danger" %>
+            <% else %>
+              <%= button_to 'like', like_tweet_path(tweet), method: :put %>
+            <% end %>
           </div>
         </div>
       </div>
@@ -270,6 +277,12 @@
     text-align: center;
   }
 
+  .button_to .btn-danger {
+    border-color: var(--danger);
+    background: var(--danger);
+    color: var(--accent-ink);
+  }
+
 
   .tweet-body-content {
     display: flex;
@@ -317,8 +330,25 @@
 
   /*Alertas*/
 
+  .flash {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 12px 14px;
+    box-shadow: var(--shadow);
+    margin: 18px 0 8px;
+    font-size: 14px;
+  }
+
   .flash--alert {
-    border-left-color: var(--danger);
+    border-left: 4px solid var(--danger);
+  }
+
+  .flash--notice {
+    border-left: 4px solid var(--success);
   }
 
   .flash .err {
@@ -330,20 +360,6 @@
   .flash .ok {
     color: var(--success);
     font-weight: 600;
-  }
-
-  .flash {
-    display: flex;
-    gap: 12px;
-    align-items: center;
-    background: var(--card);
-    border: 1px solid var(--line);
-    border-left: 4px solid var(--success);
-    border-radius: var(--radius);
-    padding: 12px 14px;
-    box-shadow: var(--shadow);
-    margin: 18px 0 8px;
-    font-size: 14px;
   }
 
 
