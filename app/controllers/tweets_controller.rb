@@ -30,25 +30,27 @@ class TweetsController < ApplicationController
         session[:created_ids] << @tweet.id
       end
 
-      redirect_to @tweet, notice: "Tweet was successfully created."
+      redirect_to tweets_path, notice: "Tweet was successfully created."
     else
-      render :new, status: :unprocessable_content
+      @tweets = Tweet.all.order(created_at: :desc)
+      flash.now[:alert] = "Author is too short (minimum is 4 characters) and Content is too short (minimum is 4 characters)"
+      render :index, status: :unprocessable_content
     end
   end
 
   # PATCH/PUT /tweets/1
   def update
     if @tweet.update(tweet_params)
-      redirect_to @tweet, notice: "Tweet was successfully updated.", status: :see_other
+      redirect_to tweets_path, notice: "Tweet was successfully updated.", status: :see_other
     else
-      render :edit, status: :unprocessable_content
+      render :index, status: :unprocessable_content
     end
   end
 
   # DELETE /tweets/1
   def destroy
     if session[:created_ids].nil? || !session[:created_ids].include?(@tweet.id)
-      redirect_to @tweet, alert: "You are not allowed to delete this tweet.", status: :see_other
+      redirect_to tweets_path, alert: "You are not allowed to delete this tweet.", status: :see_other
     else
       @tweet.destroy!
       redirect_to tweets_path, notice: "Tweet was successfully destroyed.", status: :see_other
